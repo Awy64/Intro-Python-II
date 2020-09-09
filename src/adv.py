@@ -96,4 +96,5 @@ while True:
     else:
       print("please select a direction")
       time.sleep(1)
+      
 
