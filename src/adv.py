@@ -1,10 +1,15 @@
+import textwrap
 from room import Room
+from player import Player
+import os
+import time
+
 
 # Declare all the rooms
 
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+                    "North of you, the cave mount beckons"),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
 passages run north and east."""),
@@ -38,7 +43,7 @@ room['treasure'].s_to = room['narrow']
 #
 
 # Make a new player object that is currently in the 'outside' room.
-
+tom = Player(room['outside'])
 # Write a loop that:
 #
 # * Prints the current room name
@@ -49,3 +54,46 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+
+def clear():
+    return os.system('cls' if os.name == 'nt' else 'clear')
+
+while True:
+    clear()
+    print(textwrap.fill(str(tom), width=70))
+    go = input("Please select north 'n' south 's' east 'e'  west 'w' quit 'q' ")
+
+    if go == 'n':
+      if tom.loc.n_to == False:
+        print('you cant go this way')
+        time.sleep(1)
+      else:
+        tom.move_to(tom.loc.n_to)
+        clear()
+    elif go == 'e':
+      if tom.loc.e_to == False:
+        print('you cant go this way')
+        time.sleep(1)
+      else:
+        tom.move_to(tom.loc.e_to)
+        clear()
+    elif go == 's':
+      if tom.loc.s_to == False:
+        print('you cant go this way')
+        time.sleep(1)
+      else:
+        tom.move_to(tom.loc.s_to)
+        clear()
+    elif go == 'w':
+      if tom.loc.w_to == False:
+        print('you cant go this way')
+        time.sleep(1)
+      else:
+        tom.move_to(tom.loc.w_to)
+        clear()
+    elif go == 'q':
+      break
+    else:
+      print("please select a direction")
+      time.sleep(1)
+
