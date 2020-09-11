@@ -3,6 +3,8 @@ from room import Room
 from player import Player
 import os
 import time
+from item import Item
+import re
 
 
 # Declare all the rooms
@@ -26,6 +28,16 @@ chamber! Sadly, it has already been completely emptied by
 earlier adventurers. The only exit is to the south."""),
 }
 
+# declare all items
+
+item = {
+    'candle': Item("candle", "A dim candle to light the way"),
+
+    'bottle': Item('bottle', "A bottle"),
+
+    'diamond': Item('diamond', "So there is treasue in here.")
+}
+
 
 # Link rooms together
 
@@ -38,7 +50,12 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
-#
+# Add Items to room
+
+room['outside'].add_item(item['candle'])
+room['treasure'].add_item(item['diamond'])
+room['overlook'].add_item(item['bottle'])
+
 # Main
 #
 
@@ -61,40 +78,76 @@ def clear():
 while True:
     clear()
     print(textwrap.fill(str(tom), width=70))
-    go = input("Please select north 'n' south 's' east 'e'  west 'w' quit 'q' ")
-
-    if go == 'n':
-      if tom.loc.n_to == False:
-        print('you cant go this way')
-        time.sleep(1)
+    tom.room_items()
+    inputs = input("Please select north 'n' south 's' east 'e'  west 'w' quit 'q' ")
+    if (len(inputs) == 1):
+      if inputs == 'q': ## quit
+        break
+      elif inputs == 'i': ## inventory
+        tom.player_items()
+        input('Press enter to continue')
       else:
-        tom.move_to(tom.loc.n_to)
-        clear()
-    elif go == 'e':
-      if tom.loc.e_to == False:
-        print('you cant go this way')
-        time.sleep(1)
-      else:
-        tom.move_to(tom.loc.e_to)
-        clear()
-    elif go == 's':
-      if tom.loc.s_to == False:
-        print('you cant go this way')
-        time.sleep(1)
-      else:
-        tom.move_to(tom.loc.s_to)
-        clear()
-    elif go == 'w':
-      if tom.loc.w_to == False:
-        print('you cant go this way')
-        time.sleep(1)
-      else:
-        tom.move_to(tom.loc.w_to)
-        clear()
-    elif go == 'q':
-      break
+        print('please choose a action')
+        input('Press enter to continue')
+        continue
+    elif (len(re.findall(r'\w+', inputs)) == 2): 
+      global v
+      global o 
+      v,o = inputs.split()
     else:
-      print("please select a direction")
-      time.sleep(1)
-      
+      continue
+    ## begin move
+    if v == 'move':
+      if o == 'n':
+        if tom.loc.n_to == False:
+          print('you cant go this way')
+          input('Press enter to continue')
+        else:
+          tom.move_to(tom.loc.n_to)
+          clear()
+      elif o == 'e':
+        if tom.loc.e_to == False:
+          print('you cant go this way')
+          input('Press enter to continue')
+        else:
+          tom.move_to(tom.loc.e_to)
+          clear()
+      elif o == 's':
+        if tom.loc.s_to == False:
+          print('you cant go this way')
+          input('Press enter to continue')
+        else:
+          tom.move_to(tom.loc.s_to)
+          clear()
+      elif o == 'w':
+        if tom.loc.w_to == False:
+          print('you cant go this way')
+          input('Press enter to continue')
+        else:
+          tom.move_to(tom.loc.w_to)
+          clear()
+      else:
+        print("please select a direction")
+        input('Press enter to continue')
+    ## end move
+    ## begin take
+    elif v == 'take': 
+      if (o in item and item[o] in tom.loc.inventory):
+        tom.add_item(item[o])
+        print(f'{o} added to inventory')
+        input('Press enter to continue')
+      else:
+        print('item not found')
+        input('Press enter to continue')
+    ## end take
+    elif v == 'drop':
+      if (o in item and item[o] in tom.inventory):
+        tom.remove_item(item[o])
+        print(f'{o} removed to inventory')
+        input('Press enter to continue')
+      else:
+        print('item not found')
+        input('Press enter to continue')
+
+
 
