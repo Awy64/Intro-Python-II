@@ -9,5 +9,10 @@ class Room:
       self.s_to = False
       self.e_to = False
       self.w_to = False
+      self.inventory = []
+    def add_item(self, item):
+      self.inventory.append(item)
+    def remove_item(self, item):
+      self.inventory.remove(item)
     def __str__(self):
       return f'{self.name}'
